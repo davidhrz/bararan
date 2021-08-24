@@ -9,6 +9,7 @@ body {
 
 textarea {
     font: 12px sans-serif;
+    resize: none;
 }
 
 button {
