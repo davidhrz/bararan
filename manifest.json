@@ -1,0 +1,26 @@
+{
+
+  "manifest_version": 2,
+  "name": "Bararan",
+  "version": "0.0.0",
+
+  "description": "Translator extension",
+  "icons": {
+    "48": "icons/bararan-48.png"
+  },
+
+  "permissions": [
+    "storage"
+  ],
+
+  "browser_action": {
+    "default_icon": "icons/bararan-32.png",
+    "theme_icons": [{
+        "light": "icons/bararan-32-light.png",
+        "dark": "icons/bararan-32.png",
+        "size": 32
+    }],
+    "default_title": "Bararan",
+    "default_popup": "popup/translate.html"
+  }
+}

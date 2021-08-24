@@ -1,0 +1,16 @@
+* {
+    display: block;
+    width:inherit;
+}
+
+body {
+    width: 300px;
+}
+
+textarea {
+    font: 12px sans-serif;
+}
+
+button {
+    height: 40px;
+}
