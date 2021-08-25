@@ -7,11 +7,21 @@ body {
     width: 300px;
 }
 
+h1 {
+    font: 18px sans-serif;
+}
+
 textarea {
     font: 12px sans-serif;
     resize: none;
+    width: 97%;
 }
 
-button {
-    height: 40px;
+.output-area {
+    font: 16px sans-serif;
+    padding: 4px;
+}
+
+.history-area {
+    display: none;
 }
