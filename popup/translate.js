@@ -1,6 +1,7 @@
 const textarea = document.querySelector("textarea");
 const historyArea = document.querySelector(".history-area");
-const outputText = document.querySelector(".output-text");
+const outputArea = document.querySelector(".output-area");
+const errorArea = document.querySelector(".error-area");
 
 // Start translation after user has stopped writing for 1.2 sec
 let timeoutId = 0;
@@ -8,6 +9,14 @@ textarea.addEventListener('input', () => {
     clearTimeout(timeoutId);
     timeoutId = setTimeout(processWord, 1200);
 });
+
+async function getAutocompletions(inputWord) {
+    return await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(`https://bararanonline.com/words/autocomplete?term=${inputWord}`)}`)
+        .then(response => {
+            if (response.ok) return response.json();
+            throw new Error("Error fetching autocompletions");
+        });
+}
 
 // Returns an array that contains arrays of words. Each array represents a meaning of the word
 async function getTranslations(inputWord) {
@@ -48,26 +57,60 @@ function addToHistory(word) {
     historyArea.querySelector("ul").appendChild(li);
 }
 
+function resetOutputArea() {
+    outputArea.innerHTML = "";
+    errorArea.style.display = "none";
+}
+
 async function processWord() {
-    outputText.textContent = "";
-    outputText.style.backgroundColor = "transparent";
+    resetOutputArea();
+
     let input = textarea.value.trim();
     if (input === "") {
         return;
     }
-    
-    outputText.textContent = "...";
+
+    outputArea.innerHTML = "...";
+    let autocompletions = await getAutocompletions(input);
+    console.log(autocompletions);
+
     let translations;
     try {
         translations = await getTranslations(input);
-        outputText.textContent = translations[0][0];
+        resetOutputArea();
+        translations.forEach(meaning => {
+            let output = document.createElement("p");
+            output.className = "output-text";
+            output.textContent = meaning[0];
+            outputArea.appendChild(output);
+
+            if (meaning.length > 1) {
+                let subtext = document.createElement("p");
+                subtext.className = "output-subtext";
+                subtext.textContent = arrayToPrettyStr(meaning.slice(1));
+                outputArea.appendChild(subtext);
+            }
+        });
     }
     catch (error) {
-        outputText.textContent = error;
-        outputText.style.backgroundColor = "#faa2a9";
-        outputText.style.color = "#842029";
+        outputArea.innerHTML = "";
+        errorArea.innerHTML = error.message;
+        errorArea.style.display = "block";
     }
 
     console.log(translations);
     addToHistory(input);
+}
+
+function arrayToPrettyStr(array) {
+    let result = "";
+
+    for (let i = 0; i < array.length; i++) {
+        result += array[i];
+        if (i != array.length - 1) {
+            result += ", ";
+        }
+    }
+
+    return result;
 }
